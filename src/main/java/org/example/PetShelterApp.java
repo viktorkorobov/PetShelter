@@ -1,85 +1,19 @@
 package org.example;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-public class PetShelterApp extends workWithJSON {
-
+public class PetShelterApp {
+    private static final Scanner scanner = new Scanner(System.in);
     private static List<Pet> petList;
-    private static workWithJSON workWithJSON;
-    public PetShelterApp() {
-        this.petList = new ArrayList<>();
-        this.workWithJSON = new workWithJSON();
-        loadData();
-    }
-    private void loadData() {
-        petList = workWithJSON.loadPetData();
-    }
 
-    private static void addPet() {
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Enter pet information:");
+    public static void main(String[] args) {
+        petList = PetDataHandler.loadPetData();
 
-        System.out.print("Name: ");
-        String name = scanner.nextLine();
-
-        System.out.print("Breed: ");
-        String breed = scanner.nextLine();
-
-        System.out.print("Age: ");
-        int age = scanner.nextInt();
-
-        Pet newPet = new Pet(name, breed, age);
-        petList.add(newPet);
-
-        System.out.println("Pet '" + name + "’ successfully added to the list.");
-    }
-
-    private static void showAllPets() {
-
-        if (petList.isEmpty()) {
-            System.out.println("No animals in the shelter.");
-        } else {
-            System.out.println("List of all animals in the shelter:");
-            for (Pet pet : petList) {
-                System.out.println("Name: " + pet.getName());
-                System.out.println("Breed: " + pet.getBreed());
-                System.out.println("Age: " + pet.getAge());
-                System.out.println("--------------------------");
-            }
-        }
-    }
-
-    private static void takePetFromShelter() {
-        if (petList.isEmpty()) {
-            System.out.println("No animals in the shelter.");
-        } else {
-            Scanner scanner = new Scanner(System.in);
-            System.out.println("List of all animals in the shelter: ");
-            int index = scanner.nextInt();
-
-            if (index >= 1 && index <= petList.size()) {
-                Pet removedPet = petList.remove(index - 1);
-                System.out.println("Pet '" + removedPet.getName() + "’ delete from shelter.");
-            } else {
-                System.out.println("Incorrect number of chosen animal.");
-            }
-        }
-    }
-    public void run(){
-
-        Scanner scanner = new Scanner(System.in);
-        int choice = 0;
-        do {
-            System.out.println("PetShelterApp");
-            System.out.println("1. Add animal");
-            System.out.println("2. Show all animals");
-            System.out.println("3. Delete animal");
-            System.out.println("4. Exit");
-            System.out.println("----------------");
-            System.out.println("Choose option: ");
-            choice = scanner.nextInt();
+        while (true) {
+            displayMenu();
+            int choice = scanner.nextInt();
+            scanner.nextLine(); // Clearing the buffer after entering the number
 
             switch (choice) {
                 case 1:
@@ -92,12 +26,73 @@ public class PetShelterApp extends workWithJSON {
                     takePetFromShelter();
                     break;
                 case 4:
-                    workWithJSON.savePetData(petList);
-                    System.out.println("Thank you for using the program!");
+                    exit();
                     break;
                 default:
-                    System.out.println("You entered an incorrect option. Please try again.");
+                    System.out.println("Invalid choice. Please try again.");
             }
-        } while (choice != 4);
+            PetDataHandler.savePetData(petList);
+        }
+    }
+
+    private static void displayMenu() {
+        System.out.println("Choose an option:");
+        System.out.println("1. Add a pet");
+        System.out.println("2. View all pets");
+        System.out.println("3. Remove a pet");
+        System.out.println("4. Exit");
+    }
+
+    private static void addPet() {
+        System.out.println("Enter the pet's name:");
+        String name = scanner.nextLine();
+
+        System.out.println("Enter the pet's breed:");
+        String breed = scanner.nextLine();
+
+        System.out.println("Enter the pet's age:");
+        int age = scanner.nextInt();
+        scanner.nextLine();
+        Pet newPet = new Pet(name, breed, age);
+        petList.add(newPet);
+
+        System.out.println("Pet added successfully!");
+
+        PetDataHandler.savePetData(petList);
+    }
+
+    private static void showAllPets() {
+        if (petList.isEmpty()) {
+            System.out.println("There are no pets in the shelter.");
+        } else {
+            System.out.println("List of all pets in the shelter:");
+            for (Pet pet : petList) {
+                System.out.println(pet);
+            }
+        }
+    }
+
+    private static void takePetFromShelter() {
+        if (petList.isEmpty()) {
+            System.out.println("There are no pets in the shelter to remove.");
+        } else {
+            System.out.println("Enter the name of the pet you want to remove:");
+            String nameToRemove = scanner.nextLine();
+
+            boolean removed = petList.removeIf(pet -> pet.getName().equalsIgnoreCase(nameToRemove));
+
+            if (removed) {
+                System.out.println("Pet removed successfully!");
+            } else {
+                System.out.println("Pet with the name " + nameToRemove + " not found in the shelter.");
+            }
+
+            PetDataHandler.savePetData(petList);
+        }
+    }
+
+    private static void exit() {
+        System.out.println("Thank you for using the application!");
+        System.exit(0);
     }
 }
