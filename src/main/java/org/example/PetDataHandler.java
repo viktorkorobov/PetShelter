@@ -18,8 +18,7 @@ public class PetDataHandler {
             return objectMapper.readValue(new File(FILE_PATH),
                     objectMapper.getTypeFactory().constructCollectionType(List.class, Pet.class));
         } catch (IOException e) {
-            // обробка винятків при неможливості завантаження даних
-            return List.of();
+            e.printStackTrace();
         }
     }
 
@@ -27,7 +26,6 @@ public class PetDataHandler {
         try {
             objectMapper.writeValue(new File(FILE_PATH), pets);
         } catch (IOException e) {
-            // обробка винятків при неможливості збереження даних
             e.printStackTrace();
         }
     }
