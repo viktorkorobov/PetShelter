@@ -13,8 +13,8 @@ public class PetShelterApp {
         while (true) {
             displayMenu();
             int choice = scanner.nextInt();
-            scanner.nextLine(); // Clearing the buffer after entering the number
-
+            scanner.nextLine(); 
+            
             switch (choice) {
                 case 1:
                     addPet();
